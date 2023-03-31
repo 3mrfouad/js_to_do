@@ -28,22 +28,10 @@
 		<form class="container d-flex align-items-center gap-2">
 			<label for="text">To Do:</label>
 			<input type="text" name="text" id="text">
-			<button class="btn btn-primary">Add</button>
+			<button class="btn btn-primary" id="add">Add</button>
 		</form>
 		<div class="container">
-			<ul class="list-group">
-				<li class="list-group-item">
-					<div class="d-flex align-items-center justify-content-between">
-						<div>
-							<input type="checkbox" name="status" id="status">
-							<label>Buy a milk</label>
-						</div>
-						<div>
-							<button class="btn btn-danger">Del</button>
-							<button class="btn btn-secondary">Edit</button>
-						</div>
-					</div>
-				</li>
+			<ul id='items-list' class="list-group">
 			</ul>
 		</div>
 	</div>
