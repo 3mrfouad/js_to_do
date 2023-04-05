@@ -12,15 +12,50 @@ class ToDo {
 }
 // create the todo list data structure
 let list = []
-
+const saveList = list => {
+  localStorage.setItem(TODO_LIST_LS_KEY, JSON.stringify(list))
+}
+const loadList = () => {
+  try {
+    const listFromLocalStorage = localStorage.getItem(TODO_LIST_LS_KEY)
+    const LSList = JSON.parse(listFromLocalStorage)
+    LSList?.forEach(todo => {
+      createToDoFromLS(todo)
+    })
+  } catch (err) {
+    // ignore it
+    console.log(err)
+  }
+}
 const userInput = document.querySelector('#text')
 const addBtn = document.querySelector('#add')
+const CLRBtn = document.querySelector('#clr')
 const ul = document.querySelector('#items-list')
+const TODO_LIST_LS_KEY = 'todoList'
 
-const saveList = list => localStorage.setItem('todoList', JSON.stringify(list))
+const onClearAll = evt => {
+  evt.preventDefault()
+  while (ul.firstChild) {
+    ul.removeChild(ul.firstChild)
+  }
+
+  list = []
+  localStorage.removeItem(TODO_LIST_LS_KEY)
+}
+
+CLRBtn.addEventListener('click', onClearAll)
+
+// load todo list from local storage on page load/ reload
+addEventListener('load', loadList)
+
+const createToDoFromLS = todo => {
+  const newTodo = new ToDo(todo.text, todo.isComplete)
+  list.push(newTodo)
+  createDOMElements(newTodo)
+}
 
 const createToDo = evt => {
-  evt.preventDefault() // stop form default behaviour .. i.e, form submission to a backend
+  evt?.preventDefault() // stop form default behaviour .. i.e, form submission to a backend
   const text = userInput.value
   const newTodo = new ToDo(text)
   list.push(newTodo)
@@ -51,12 +86,13 @@ const createDOMElements = todo => {
   label.classList.add('truncate')
   label.style.textDecoration = todo.isComplete ? 'line-through' : ''
   textDiv.appendChild(label)
-  const labelOnBlue = () => {
+  const labelOnBluer = () => {
     label.removeAttribute('contenteditable')
     todo.text = label.innerText
     saveList(list)
   }
-  label.addEventListener('blur', labelOnBlue)
+
+  label.addEventListener('blur', labelOnBluer)
 
   const cb = document.createElement('input')
   cb.setAttribute('type', 'checkbox')
@@ -67,6 +103,7 @@ const createDOMElements = todo => {
   const cbOnClick = () => {
     todo.toggle()
     label.style.textDecoration = todo.isComplete ? 'line-through' : ''
+    saveList(list)
   }
   cb.addEventListener('click', cbOnClick)
 
